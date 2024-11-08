@@ -62,10 +62,17 @@ export function jsxLocationPlugin(config: JsxLocationPluginConfig): PluginObj<an
             Program(path, state) {
                 transformCurrentFile = false
                 importedRuntime = false
+
+                // commented out because it doesn't work in a monorepo with relative paths (ex: ../../../packages)
                 // target only project files
-                if (typeof state.filename !== 'string' || !state.filename.includes(cwd)) return
+                // if (typeof state.filename !== 'string' || !state.filename.includes(cwd)) return
+                // still skip node_modules
+                if (typeof state.filename !== 'string' || state.filename.includes('node_modules')) {
+                    return
+                }
+
                 transformCurrentFile = true
-    
+
                 // inject projectPath variable
                 path.node.body.push(projectPathAst)
             },
